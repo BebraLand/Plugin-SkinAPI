@@ -151,16 +151,17 @@ class ApiController extends Controller
     {
         abort_if(! setting('skin.capes.enable', false), 404);
 
-        $request->validate([
-            'access_token' => 'required|string',
-            'cape' => ['required', 'mimes:png', SkinAPI::getRule(true)],
-        ], SkinAPI::validationMessages());
+        $request->validate(['access_token' => 'required|string']);
 
         $user = User::firstWhere('access_token', $request->input('access_token'));
 
         if ($user === null) {
             return response()->json(['status' => false, 'error' => 'Invalid token'], 403);
         }
+
+        $request->validate([
+            'cape' => ['required', 'mimes:png', SkinAPI::getRule(true, $user->can('skin-api.hd-cape'))],
+        ], SkinAPI::validationMessages($user->can('skin-api.hd-cape')));
 
         $file = $request->file('cape');
 

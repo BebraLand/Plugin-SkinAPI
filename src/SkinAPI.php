@@ -7,13 +7,26 @@ use Illuminate\Validation\Rule;
 
 class SkinAPI
 {
-    public static function getConstraints(bool $cape = false): array
+    public const HIGH_RES_CAPE_MAX_WIDTH = 1024;
+
+    public const HIGH_RES_CAPE_MAX_HEIGHT = 512;
+
+    public static function getConstraints(bool $cape = false, bool $highResolutionCape = false): array
     {
         $prefix = $cape ? 'skin.capes.' : 'skin.';
 
         $width = (int) setting($prefix.'width', 64);
         $height = (int) setting($prefix.'height', 64);
         $scale = (int) setting($prefix.'scale', 1);
+
+        if ($cape && $highResolutionCape) {
+            return [
+                'min_width' => $width,
+                'min_height' => $height,
+                'max_width' => static::HIGH_RES_CAPE_MAX_WIDTH,
+                'max_height' => static::HIGH_RES_CAPE_MAX_HEIGHT,
+            ];
+        }
 
         if ($scale === 1) {
             return ['width' => $width, 'height' => $height];
@@ -27,29 +40,29 @@ class SkinAPI
         ];
     }
 
-    public static function getRule(bool $cape = false): string
+    public static function getRule(bool $cape = false, bool $highResolutionCape = false): string
     {
-        return Rule::dimensions(static::getConstraints($cape));
+        return Rule::dimensions(static::getConstraints($cape, $highResolutionCape));
     }
 
     /**
      * Get human-readable image dimensions accepted for an upload.
      */
-    public static function dimensionsDescription(bool $cape = false): string
+    public static function dimensionsDescription(bool $cape = false, bool $highResolutionCape = false): string
     {
-        $constraints = static::getConstraints($cape);
+        $constraints = static::getConstraints($cape, $highResolutionCape);
 
         if (isset($constraints['width'])) {
-            return "{$constraints['width']} × {$constraints['height']} px";
+            return "{$constraints['width']} x {$constraints['height']} px";
         }
 
-        return "{$constraints['min_width']}–{$constraints['max_width']} × {$constraints['min_height']}–{$constraints['max_height']} px";
+        return "{$constraints['min_width']}-{$constraints['max_width']} x {$constraints['min_height']}-{$constraints['max_height']} px";
     }
 
     /**
      * Get validation messages that explain configured image requirements.
      */
-    public static function validationMessages(): array
+    public static function validationMessages(bool $highResolutionCape = false): array
     {
         return [
             'skin.dimensions' => trans('skin-api::messages.invalid_image_dimensions', [
@@ -58,7 +71,7 @@ class SkinAPI
             ]),
             'cape.dimensions' => trans('skin-api::messages.invalid_image_dimensions', [
                 'name' => trans('skin-api::messages.cape'),
-                'dimensions' => static::dimensionsDescription(true),
+                'dimensions' => static::dimensionsDescription(true, $highResolutionCape),
             ]),
         ];
     }

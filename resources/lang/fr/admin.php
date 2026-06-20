@@ -27,6 +27,7 @@ return [
     'permissions' => [
         'skin' => 'Ajouter un skin',
         'cape' => 'Ajouter une cape',
+        'hd_cape' => 'Ajouter des capes haute resolution (jusqu a 1024 x 512 px)',
         'manage' => 'Gérer les paramètres des skins et capes',
     ],
 ];

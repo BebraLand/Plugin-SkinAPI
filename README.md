@@ -48,7 +48,8 @@ Returns the cape of the given user.
 | `access_token` | string    | The user's access token |
 | `cape`         | image/png | The cape file           |
 
-Cape dimensions must match limits configured in Admin Dashboard. Default: `64 × 32 px`.
+Cape dimensions must match limits configured in Admin Dashboard. Default: `64 x 32 px`.
+Users with `skin-api.hd-cape` can upload capes from configured base dimensions up to `1024 x 512 px`.
 
 ### Profile as JSON
 

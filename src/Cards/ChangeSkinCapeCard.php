@@ -41,7 +41,7 @@ class ChangeSkinCapeCard extends UserProfileCardComposer
             View::share([
                 'capeUrl' => $cape?->imageUrl(),
                 'hasCape' => $cape !== null,
-                'capeRequirements' => SkinAPI::dimensionsDescription(true),
+                'capeRequirements' => SkinAPI::dimensionsDescription(true, $user->can('skin-api.hd-cape')),
             ]);
         }
 

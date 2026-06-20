@@ -27,6 +27,7 @@ return [
     'permissions' => [
         'skin' => 'Upload a skin',
         'cape' => 'Upload a cape',
+        'hd_cape' => 'Upload high-resolution capes (up to 1024 x 512 px)',
         'manage' => 'Manage skins and capes settings',
     ],
 ];

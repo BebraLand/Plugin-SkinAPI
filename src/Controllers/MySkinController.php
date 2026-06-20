@@ -20,15 +20,18 @@ class MySkinController extends Controller
         $skin = Skin::forUser($request->user()->id);
         $cape = Cape::forUser($request->user()->id);
 
+        $canUploadCape = setting('skin.capes.enable', false) && $user->can('skin-api.cape');
+        $canUploadHighResolutionCape = $canUploadCape && $user->can('skin-api.hd-cape');
+
         return view('skin-api::index', [
             'canUploadSkin' => $user->can('skin-api.skin'),
-            'canUploadCape' => setting('skin.capes.enable', false) && $user->can('skin-api.cape'),
+            'canUploadCape' => $canUploadCape,
             'skinUrl' => $skin?->imageUrl() ?? SkinAPI::defaultSkin(),
             'capeUrl' => $cape?->imageUrl(),
             'hasSkin' => $skin !== null,
             'hasCape' => $cape !== null,
             'skinRequirements' => SkinAPI::dimensionsDescription(),
-            'capeRequirements' => SkinAPI::dimensionsDescription(true),
+            'capeRequirements' => SkinAPI::dimensionsDescription(true, $canUploadHighResolutionCape),
         ]);
     }
 
@@ -43,8 +46,8 @@ class MySkinController extends Controller
 
         $this->validate($request, [
             'skin' => ['nullable', 'mimes:png', SkinAPI::getRule()],
-            'cape' => ['nullable', 'mimes:png', SkinAPI::getRule(true)],
-        ], SkinAPI::validationMessages());
+            'cape' => ['nullable', 'mimes:png', SkinAPI::getRule(true, $user->can('skin-api.hd-cape'))],
+        ], SkinAPI::validationMessages($user->can('skin-api.hd-cape')));
 
         if ($request->hasFile('skin') && $user->can('skin-api.skin')) {
             $file = $request->file('skin');

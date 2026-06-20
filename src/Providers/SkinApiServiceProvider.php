@@ -66,6 +66,7 @@ class SkinApiServiceProvider extends BasePluginServiceProvider
         Permission::registerPermissions([
             'skin-api.skin' => 'skin-api::admin.permissions.skin',
             'skin-api.cape' => 'skin-api::admin.permissions.cape',
+            'skin-api.hd-cape' => 'skin-api::admin.permissions.hd_cape',
             'admin.skin-api' => 'skin-api::admin.permissions.manage',
         ]);
 
