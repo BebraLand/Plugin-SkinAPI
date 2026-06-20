@@ -27,6 +27,8 @@ class MySkinController extends Controller
             'capeUrl' => $cape?->imageUrl(),
             'hasSkin' => $skin !== null,
             'hasCape' => $cape !== null,
+            'skinRequirements' => SkinAPI::dimensionsDescription(),
+            'capeRequirements' => SkinAPI::dimensionsDescription(true),
         ]);
     }
 
@@ -42,7 +44,7 @@ class MySkinController extends Controller
         $this->validate($request, [
             'skin' => ['nullable', 'mimes:png', SkinAPI::getRule()],
             'cape' => ['nullable', 'mimes:png', SkinAPI::getRule(true)],
-        ]);
+        ], SkinAPI::validationMessages());
 
         if ($request->hasFile('skin') && $user->can('skin-api.skin')) {
             $file = $request->file('skin');

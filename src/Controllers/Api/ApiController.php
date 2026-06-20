@@ -103,7 +103,7 @@ class ApiController extends Controller
         $this->validate($request, [
             'access_token' => 'required|string',
             'skin' => ['required', 'mimes:png', SkinAPI::getRule()],
-        ]);
+        ], SkinAPI::validationMessages());
 
         $user = User::firstWhere('access_token', $request->input('access_token'));
 
@@ -154,7 +154,7 @@ class ApiController extends Controller
         $request->validate([
             'access_token' => 'required|string',
             'cape' => ['required', 'mimes:png', SkinAPI::getRule(true)],
-        ]);
+        ], SkinAPI::validationMessages());
 
         $user = User::firstWhere('access_token', $request->input('access_token'));
 

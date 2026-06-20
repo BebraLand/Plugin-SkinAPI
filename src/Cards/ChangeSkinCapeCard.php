@@ -26,6 +26,7 @@ class ChangeSkinCapeCard extends UserProfileCardComposer
             View::share([
                 'skinUrl' => $skin?->imageUrl() ?? SkinAPI::defaultSkin(),
                 'hasSkin' => $skin !== null,
+                'skinRequirements' => SkinAPI::dimensionsDescription(),
             ]);
         }
 
@@ -40,6 +41,7 @@ class ChangeSkinCapeCard extends UserProfileCardComposer
             View::share([
                 'capeUrl' => $cape?->imageUrl(),
                 'hasCape' => $cape !== null,
+                'capeRequirements' => SkinAPI::dimensionsDescription(true),
             ]);
         }
 

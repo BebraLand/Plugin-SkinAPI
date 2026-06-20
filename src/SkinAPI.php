@@ -32,6 +32,37 @@ class SkinAPI
         return Rule::dimensions(static::getConstraints($cape));
     }
 
+    /**
+     * Get human-readable image dimensions accepted for an upload.
+     */
+    public static function dimensionsDescription(bool $cape = false): string
+    {
+        $constraints = static::getConstraints($cape);
+
+        if (isset($constraints['width'])) {
+            return "{$constraints['width']} × {$constraints['height']} px";
+        }
+
+        return "{$constraints['min_width']}–{$constraints['max_width']} × {$constraints['min_height']}–{$constraints['max_height']} px";
+    }
+
+    /**
+     * Get validation messages that explain configured image requirements.
+     */
+    public static function validationMessages(): array
+    {
+        return [
+            'skin.dimensions' => trans('skin-api::messages.invalid_image_dimensions', [
+                'name' => trans('skin-api::messages.skin'),
+                'dimensions' => static::dimensionsDescription(),
+            ]),
+            'cape.dimensions' => trans('skin-api::messages.invalid_image_dimensions', [
+                'name' => trans('skin-api::messages.cape'),
+                'dimensions' => static::dimensionsDescription(true),
+            ]),
+        ];
+    }
+
     public static function defaultSkin(): string
     {
         static::ensureDefaultSkin();

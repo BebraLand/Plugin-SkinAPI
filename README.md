@@ -33,6 +33,8 @@ Returns the avatar, with the skin body on top, of the given user.
 | `access_token` | string    | The user's access token |
 | `skin`         | image/png | The skin layout         |
 
+Skin dimensions must match limits configured in Admin Dashboard. Default: `64 × 64 px`.
+
 ### Cape
 
 Capes must be enabled in the Admin Dashboard in order to be in use.
@@ -45,6 +47,8 @@ Returns the cape of the given user.
 | -------------- | --------- | ----------------------- |
 | `access_token` | string    | The user's access token |
 | `cape`         | image/png | The cape file           |
+
+Cape dimensions must match limits configured in Admin Dashboard. Default: `64 × 32 px`.
 
 ### Profile as JSON
 

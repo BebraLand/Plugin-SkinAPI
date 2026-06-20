@@ -37,6 +37,7 @@
     <div class="mb-3">
         <label for="skin">{{ trans('skin-api::messages.skin') }}</label>
         <input type="file" class="form-control @error('skin') is-invalid @enderror" id="skinInput" name="skin" accept="image/png" data-skin-preview="skinPreview">
+        <div class="form-text">{{ trans('skin-api::messages.upload_requirements', ['dimensions' => $skinRequirements]) }}</div>
 
         @error('skin')
         <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>

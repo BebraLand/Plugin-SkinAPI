@@ -5,6 +5,8 @@ return [
     'cape_title' => 'My Cape',
     'skin' => 'Skin',
     'cape' => 'Cape',
+    'upload_requirements' => 'PNG image, dimensions: :dimensions.',
+    'invalid_image_dimensions' => ':name must be a PNG image with dimensions: :dimensions.',
 
     'delete' => [
         'title' => 'Delete',

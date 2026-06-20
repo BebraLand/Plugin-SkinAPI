@@ -4,6 +4,7 @@
     <div class="mb-3">
         <label for="cape">{{ trans('skin-api::messages.cape') }}</label>
         <input type="file" class="form-control @error('cape') is-invalid @enderror" id="cape" name="cape" accept="image/png" data-skin-preview="capePreview">
+        <div class="form-text">{{ trans('skin-api::messages.upload_requirements', ['dimensions' => $capeRequirements]) }}</div>
 
         @error('cape')
         <span class="invalid-feedback" role="alert"><strong>{{ $message }}</strong></span>
