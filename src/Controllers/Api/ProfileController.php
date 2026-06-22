@@ -4,9 +4,11 @@ namespace Azuriom\Plugin\SkinApi\Controllers\Api;
 
 use Azuriom\Models\User;
 use Azuriom\Plugin\SkinApi\Models\Cape;
+use Azuriom\Plugin\SkinApi\Models\CapePreference;
 use Azuriom\Plugin\SkinApi\Models\Skin;
 use Azuriom\Plugin\SkinApi\Resources\CapeResource;
 use Azuriom\Plugin\SkinApi\Resources\SkinResource;
+use Azuriom\Plugin\SkinApi\SkinAPI;
 use Illuminate\Routing\Controller;
 
 class ProfileController extends Controller
@@ -27,7 +29,11 @@ class ProfileController extends Controller
         return response()->json([
             'user' => $user,
             'skin' => $skin !== null ? new SkinResource($skin) : SkinResource::forDefault($user),
-            'cape' => $cape !== null ? new CapeResource($cape) : null,
+            'cape' => $cape !== null
+                ? new CapeResource($cape)
+                : ($userId && ! CapePreference::isDisabledForUser($userId) && SkinAPI::hasDefaultCape()
+                    ? CapeResource::forDefault($user)
+                    : null),
         ], options: JSON_UNESCAPED_SLASHES);
     }
 }

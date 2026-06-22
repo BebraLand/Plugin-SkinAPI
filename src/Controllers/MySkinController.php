@@ -4,6 +4,7 @@ namespace Azuriom\Plugin\SkinApi\Controllers;
 
 use Azuriom\Http\Controllers\Controller;
 use Azuriom\Plugin\SkinApi\Models\Cape;
+use Azuriom\Plugin\SkinApi\Models\CapePreference;
 use Azuriom\Plugin\SkinApi\Models\Skin;
 use Azuriom\Plugin\SkinApi\Render\AvatarRenderer;
 use Azuriom\Plugin\SkinApi\SkinAPI;
@@ -19,6 +20,7 @@ class MySkinController extends Controller
         $user = $request->user();
         $skin = Skin::forUser($request->user()->id);
         $cape = Cape::forUser($request->user()->id);
+        $hasDefaultCape = $cape === null && ! CapePreference::isDisabledForUser($user->id) && SkinAPI::hasDefaultCape();
 
         $canUploadCape = setting('skin.capes.enable', false) && $user->can('skin-api.cape');
         $canUploadHighResolutionCape = $canUploadCape && $user->can('skin-api.hd-cape');
@@ -27,9 +29,9 @@ class MySkinController extends Controller
             'canUploadSkin' => $user->can('skin-api.skin'),
             'canUploadCape' => $canUploadCape,
             'skinUrl' => $skin?->imageUrl() ?? SkinAPI::defaultSkin(),
-            'capeUrl' => $cape?->imageUrl(),
+            'capeUrl' => $cape?->imageUrl() ?? ($hasDefaultCape ? SkinAPI::defaultCape() : null),
             'hasSkin' => $skin !== null,
-            'hasCape' => $cape !== null,
+            'hasCape' => $cape !== null || $hasDefaultCape,
             'skinRequirements' => SkinAPI::dimensionsDescription(),
             'capeRequirements' => SkinAPI::dimensionsDescription(true, $canUploadHighResolutionCape),
         ]);
@@ -64,6 +66,7 @@ class MySkinController extends Controller
             Cape::firstOrNew(['user_id' => $user->id])->fill([
                 'sha256' => hash_file('sha256', $file->getPathname()),
             ])->storeImage($file, save: true);
+            CapePreference::enableForUser($user->id);
         }
 
         return redirect()->back()->with('success', trans('messages.status.success'));
@@ -85,6 +88,7 @@ class MySkinController extends Controller
     public function deleteCape(Request $request)
     {
         Cape::forUser($request->user()->id)?->delete();
+        CapePreference::disableForUser($request->user()->id);
 
         return redirect()->back()->with('success', trans('messages.status.success'));
     }

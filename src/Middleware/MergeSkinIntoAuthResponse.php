@@ -3,9 +3,11 @@
 namespace Azuriom\Plugin\SkinApi\Middleware;
 
 use Azuriom\Plugin\SkinApi\Models\Cape;
+use Azuriom\Plugin\SkinApi\Models\CapePreference;
 use Azuriom\Plugin\SkinApi\Models\Skin;
 use Azuriom\Plugin\SkinApi\Resources\CapeResource;
 use Azuriom\Plugin\SkinApi\Resources\SkinResource;
+use Azuriom\Plugin\SkinApi\SkinAPI;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,7 +41,11 @@ class MergeSkinIntoAuthResponse
 
         return $response->setData(array_merge($data, [
             'skin' => $skin !== null ? new SkinResource($skin) : SkinResource::forDefault($userId),
-            'cape' => $cape !== null ? new CapeResource($cape) : null,
+            'cape' => $cape !== null
+                ? new CapeResource($cape)
+                : (! CapePreference::isDisabledForUser($userId) && SkinAPI::hasDefaultCape()
+                    ? CapeResource::forDefault($data['name'] ?? (string) $userId)
+                    : null),
         ]));
     }
 }

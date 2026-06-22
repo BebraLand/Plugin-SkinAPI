@@ -4,6 +4,7 @@ namespace Azuriom\Plugin\SkinApi\Cards;
 
 use Azuriom\Extensions\Plugin\UserProfileCardComposer;
 use Azuriom\Plugin\SkinApi\Models\Cape;
+use Azuriom\Plugin\SkinApi\Models\CapePreference;
 use Azuriom\Plugin\SkinApi\Models\Skin;
 use Azuriom\Plugin\SkinApi\SkinAPI;
 use Illuminate\Support\Facades\View;
@@ -32,6 +33,7 @@ class ChangeSkinCapeCard extends UserProfileCardComposer
 
         if (setting('skin.capes.enable', false) && $user->can('skin-api.cape')) {
             $cape = Cape::forUser($user->id);
+            $hasDefaultCape = $cape === null && ! CapePreference::isDisabledForUser($user->id) && SkinAPI::hasDefaultCape();
 
             $cards[] = [
                 'name' => trans('skin-api::messages.cape_title'),
@@ -39,8 +41,8 @@ class ChangeSkinCapeCard extends UserProfileCardComposer
             ];
 
             View::share([
-                'capeUrl' => $cape?->imageUrl(),
-                'hasCape' => $cape !== null,
+                'capeUrl' => $cape?->imageUrl() ?? ($hasDefaultCape ? SkinAPI::defaultCape() : null),
+                'hasCape' => $cape !== null || $hasDefaultCape,
                 'capeRequirements' => SkinAPI::dimensionsDescription(true, $user->can('skin-api.hd-cape')),
             ]);
         }

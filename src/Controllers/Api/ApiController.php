@@ -5,6 +5,7 @@ namespace Azuriom\Plugin\SkinApi\Controllers\Api;
 use Azuriom\Http\Controllers\Controller;
 use Azuriom\Models\User;
 use Azuriom\Plugin\SkinApi\Models\Cape;
+use Azuriom\Plugin\SkinApi\Models\CapePreference;
 use Azuriom\Plugin\SkinApi\Models\Skin;
 use Azuriom\Plugin\SkinApi\Render\AvatarRenderer;
 use Azuriom\Plugin\SkinApi\Render\RenderType;
@@ -132,6 +133,13 @@ class ApiController extends Controller
         $cape = $userId ? Cape::forUser($userId) : null;
 
         if ($cape === null) {
+            if ($userId && ! CapePreference::isDisabledForUser($userId) && SkinAPI::hasDefaultCape()) {
+                return Storage::disk('public')->response('skins/capes/default.png', 'cape.png', [
+                    'Content-Type' => 'image/png',
+                    'Cache-Control' => 'no-cache',
+                ]);
+            }
+
             return response()->json([
                 'error' => 'Not found',
                 'message' => "No cape for user with identifier: {$user}",
@@ -168,6 +176,7 @@ class ApiController extends Controller
         Cape::firstOrNew(['user_id' => $user->id])->fill([
             'sha256' => hash_file('sha256', $file->getPathname()),
         ])->storeImage($file, save: true);
+        CapePreference::enableForUser($user->id);
 
         return response()->json(['status' => 'success']);
     }
@@ -206,6 +215,7 @@ class ApiController extends Controller
         }
 
         Cape::forUser($user->id)?->delete();
+        CapePreference::disableForUser($user->id);
 
         return response()->json(['status' => 'success']);
     }

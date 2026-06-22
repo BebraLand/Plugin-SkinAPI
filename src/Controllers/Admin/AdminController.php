@@ -36,6 +36,8 @@ class AdminController extends Controller
             'width' => setting('skin.capes.width', 64),
             'height' => setting('skin.capes.height', 32),
             'scale' => setting('skin.capes.scale', 1),
+            'defaultCapeEnabled' => setting('skin.capes.default.enable', false),
+            'defaultCape' => SkinAPI::defaultCape(),
         ]);
     }
 
@@ -65,20 +67,20 @@ class AdminController extends Controller
 
     public function updateCapes(Request $request)
     {
-        if (! $request->filled('enable')) {
-            Setting::updateSettings('skin.capes.enable', false);
-
-            return redirect()->route('skin-api.admin.capes')
-                ->with('success', trans('admin.settings.status.updated'));
-        }
-
         $settings = $this->validate($request, [
             'height' => 'required|integer|min:0',
             'width' => 'required|integer|min:0',
             'scale' => 'required|integer|min:0',
+            'default_cape' => ['nullable', 'mimes:png'],
         ]);
 
-        $settings['enable'] = true;
+        $settings = Arr::except($settings, 'default_cape');
+        $settings['enable'] = $request->boolean('enable');
+        $settings['default.enable'] = $request->boolean('default_enable');
+
+        if ($request->hasFile('default_cape')) {
+            $request->file('default_cape')->storeAs('skins/capes', 'default.png', 'public');
+        }
 
         Setting::updateSettings(Arr::prependKeysWith($settings, 'skin.capes.'));
 

@@ -11,12 +11,15 @@ return [
     'capes' => 'Capes',
 
     'enable_capes' => 'Enable capes (user must have a role with the permission to upload a cape)',
+    'enable_default_cape' => 'Show a default cape to users who have not selected a cape',
+    'default_cape_requirements' => 'PNG image. Default capes are not restricted by the player upload dimensions.',
 
     'fields' => [
         'width' => 'Width',
         'height' => 'Height',
         'scale' => 'Max scale',
         'default' => 'Default skin',
+        'default_cape' => 'Default cape',
     ],
 
     'api' => [

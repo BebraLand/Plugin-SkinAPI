@@ -90,4 +90,18 @@ class SkinAPI
             Storage::disk('public')->put('skins/default.png', file_get_contents($defaultPath));
         }
     }
+
+    public static function defaultCape(): ?string
+    {
+        return Storage::disk('public')->exists('skins/capes/default.png')
+            ? Storage::disk('public')->url('skins/capes/default.png')
+            : null;
+    }
+
+    public static function hasDefaultCape(): bool
+    {
+        return setting('skin.capes.enable', false)
+            && setting('skin.capes.default.enable', false)
+            && static::defaultCape() !== null;
+    }
 }

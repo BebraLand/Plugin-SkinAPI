@@ -10,9 +10,13 @@ return [
     'skins' => 'Skins',
     'capes' => 'Capes',
 
+    'enable_default_cape' => 'Afficher une cape par defaut aux utilisateurs qui n\'ont pas choisi de cape',
+    'default_cape_requirements' => 'Image PNG. Les dimensions de la cape par defaut ne sont pas limitees par celles des joueurs.',
+
     'enable_capes' => 'Activer les capes (les utilisateurs doivent avoir un rôle avec la permission des capes)',
 
     'fields' => [
+        'default_cape' => 'Cape par defaut',
         'width' => 'Largeur',
         'height' => 'Hauteur',
         'scale' => 'Échelle maximum',

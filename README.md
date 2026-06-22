@@ -38,9 +38,11 @@ Skin dimensions must match limits configured in Admin Dashboard. Default: `64 ×
 ### Cape
 
 Capes must be enabled in the Admin Dashboard in order to be in use.
+The dashboard can also provide a default cape for users who have not chosen one.
+Users can remove it explicitly; this prevents the default cape from being returned until they upload a cape themselves.
 
 **GET** `/api/skin-api/capes/{user_id|user_name}`
-Returns the cape of the given user.
+Returns the cape of the given user, including the configured default cape when applicable.
 
 **POST** `/api/skin-api/capes`
 | Parameter      | Type      | Description             |
